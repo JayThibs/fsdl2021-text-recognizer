@@ -1,12 +1,15 @@
 """Experiment-running framework."""
-import argparse
-import importlib
+import argparse # for sending command-line arguments for training
+import importlib 
 
 import numpy as np
 import torch
 import pytorch_lightning as pl
 import wandb
 
+# loads the lit_models directory which has base.py and __init__.py
+# __init__.py runs: from .base import BaseLitModel
+# so it automatically loads our BaseLitModel class without running base.py
 from text_recognizer import lit_models
 
 
@@ -17,10 +20,10 @@ torch.manual_seed(42)
 
 def _import_class(module_and_class_name: str) -> type:
     """Import class from a module, e.g. 'text_recognizer.models.MLP'"""
-    module_name, class_name = module_and_class_name.rsplit(".", 1)
+    module_name, class_name = module_and_class_name.rsplit(".", 1) # splits into 2 elements at "."
     module = importlib.import_module(module_name)
-    class_ = getattr(module, class_name)
-    return class_
+    class_ = getattr(module, class_name) # gives us model.class_name attribute (ex: jacques = Person(), jacques.age -> 28)
+    return class_ # the underscore after is part of PEP8 so that you don't use a built-in name like class or set
 
 
 def _setup_parser():
@@ -33,18 +36,19 @@ def _setup_parser():
     parser = argparse.ArgumentParser(add_help=False, parents=[trainer_parser])
 
     # Basic arguments
-    parser.add_argument("--data_class", type=str, default="MNIST")
-    parser.add_argument("--model_class", type=str, default="MLP")
-    parser.add_argument("--load_checkpoint", type=str, default=None)
+    parser.add_argument("--data_class", type=str, default="MNIST")      # data argument
+    parser.add_argument("--model_class", type=str, default="MLP")       # model argument
+    parser.add_argument("--load_checkpoint", type=str, default=None)    # load previous checkpoint (?)
 
     # Get the data and model classes, so that we can add their specific arguments
-    temp_args, _ = parser.parse_known_args()
-    data_class = _import_class(f"text_recognizer.data.{temp_args.data_class}")
-    model_class = _import_class(f"text_recognizer.models.{temp_args.model_class}")
+    # (?) This seems like it 
+    temp_args, _ = parser.parse_known_args() # output: Namespace(data_class='MNIST', load_checkpoint=None, model_class='MLP')
+    data_class = _import_class(f"text_recognizer.data.{temp_args.data_class}")      # temp_args.data_class -> MNIST
+    model_class = _import_class(f"text_recognizer.models.{temp_args.model_class}")  # temp_args.model_class -> MLP
 
     # Get data, model, and LitModel specific arguments
-    data_group = parser.add_argument_group("Data Args")
-    data_class.add_to_argparse(data_group)
+    data_group = parser.add_argument_group("Data Args") # add_argument_group creates a group to make it easier for users
+    data_class.add_to_argparse(data_group)              # add_to_argparse is a method in the classes
 
     model_group = parser.add_argument_group("Model Args")
     model_class.add_to_argparse(model_group)
