@@ -71,9 +71,9 @@ def main():
     """
     parser = _setup_parser()
     args = parser.parse_args()
-    data_class = _import_class(f"text_recognizer.data.{args.data_class}")
-    model_class = _import_class(f"text_recognizer.models.{args.model_class}")
-    data = data_class(args)                                                     # How do we know which are the data args
+    data_class = _import_class(f"text_recognizer.data.{args.data_class}")       # argument group for data_class created in _setup_parse()
+    model_class = _import_class(f"text_recognizer.models.{args.model_class}")   # argument group for model_class created in _setup_parse()
+    data = data_class(args)
     model = model_class(data_config=data.config(), args=args)
 
     if args.loss not in ("ctc", "transformer"):
