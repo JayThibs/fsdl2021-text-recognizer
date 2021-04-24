@@ -73,12 +73,13 @@ def main():
     args = parser.parse_args()
     data_class = _import_class(f"text_recognizer.data.{args.data_class}")
     model_class = _import_class(f"text_recognizer.models.{args.model_class}")
-    data = data_class(args)
+    data = data_class(args)                                                     # How do we know which are the data args
     model = model_class(data_config=data.config(), args=args)
 
     if args.loss not in ("ctc", "transformer"):
         lit_model_class = lit_models.BaseLitModel
 
+    # Loading from a checkpoint after a training run. How is this defined?? What is the checkpoint string?
     if args.load_checkpoint is not None:
         lit_model = lit_model_class.load_from_checkpoint(args.load_checkpoint, args=args, model=model)
     else:
@@ -87,6 +88,8 @@ def main():
     logger = pl.loggers.TensorBoardLogger("training/logs")
 
     early_stopping_callback = pl.callbacks.EarlyStopping(monitor="val_loss", mode="min", patience=10)
+
+    # How do you use this?
     model_checkpoint_callback = pl.callbacks.ModelCheckpoint(
         filename="{epoch:03d}-{val_loss:.3f}-{val_cer:.3f}", monitor="val_loss", mode="min"
     )
@@ -96,7 +99,10 @@ def main():
     trainer = pl.Trainer.from_argparse_args(args, callbacks=callbacks, logger=logger, weights_save_path="training/logs")
 
     # pylint: disable=no-member
+    # Why don't I need to pass train_dataloader, val_dataloaders?
+    # Does this not do anything unless I pass --auto_lr_find and/or --auto_scale_batch_size?
     trainer.tune(lit_model, datamodule=data)  # If passing --auto_lr_find, this will set learning rate
+                                              # tune: can find best batch size and learning rate
 
     trainer.fit(lit_model, datamodule=data)
     trainer.test(lit_model, datamodule=data)
