@@ -39,7 +39,7 @@ Today, we start with the bare minimum:
 │   │   └── util.py
 │   ├── __init__.py
 │   ├── lit_models
-│   │   ├── base.py
+│   │   ├── base.py: contains the pytorch lightning code. Instantiate model, and then train it. Contains Accuracy() and BaseLitModel.
 │   │   └── __init__.py
 │   ├── models
 │   │   ├── __init__.py
@@ -47,7 +47,7 @@ Today, we start with the bare minimum:
 │   └── util.py
 └── training
     ├── __init__.py
-    └── run_experiment.py
+    └── run_experiment.py: this is the main script.
 ```
 
 We can see that the main breakdown of the codebase is between `text_recognizer` and `training`.

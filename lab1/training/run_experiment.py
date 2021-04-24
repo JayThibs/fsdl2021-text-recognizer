@@ -72,7 +72,9 @@ def main():
     parser = _setup_parser()
     args = parser.parse_args()
     data_class = _import_class(f"text_recognizer.data.{args.data_class}")       # argument group for data_class created in _setup_parse()
+                                                                                # args for data_class: MNIST; later: EMNIST
     model_class = _import_class(f"text_recognizer.models.{args.model_class}")   # argument group for model_class created in _setup_parse()
+                                                                                # args for model_class: MLP; later: CNNLSTM, CNNTRANSFORMER
     data = data_class(args)
     model = model_class(data_config=data.config(), args=args)
 
