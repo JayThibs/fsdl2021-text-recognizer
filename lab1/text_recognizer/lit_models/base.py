@@ -35,14 +35,14 @@ class BaseLitModel(pl.LightningModule):  # pylint: disable=too-many-ancestors
         self.model = model
         self.args = vars(args) if args is not None else {}
 
-        optimizer = self.args.get("optimizer", OPTIMIZER)
+        optimizer = self.args.get("optimizer", OPTIMIZER)       # if "optimizer" is not passed to training command, use default OPTIMIZER
         self.optimizer_class = getattr(torch.optim, optimizer)
 
-        self.lr = self.args.get("lr", LR)
+        self.lr = self.args.get("lr", LR)                       # if "lr" is not passed to training command, use default LR
 
-        loss = self.args.get("loss", LOSS)
+        loss = self.args.get("loss", LOSS)                      # if "loss" is not passed to training command, use default LOSS
         if loss not in ("ctc", "transformer"):
-            self.loss_fn = getattr(torch.nn.functional, loss)
+            self.loss_fn = getattr(torch.nn.functional, loss)   # used to calculate loss in train/val/test step
 
         self.one_cycle_max_lr = self.args.get("one_cycle_max_lr", None)
         self.one_cycle_total_steps = self.args.get("one_cycle_total_steps", ONE_CYCLE_TOTAL_STEPS)
@@ -75,7 +75,7 @@ class BaseLitModel(pl.LightningModule):  # pylint: disable=too-many-ancestors
     def training_step(self, batch, batch_idx):  # pylint: disable=unused-argument
         x, y = batch
         logits = self(x)
-        loss = self.loss_fn(logits, y)
+        loss = self.loss_fn(logits, y)  # loss_fn()  defined in __init__
         self.log("train_loss", loss)
         self.train_acc(logits, y)
         self.log("train_acc", self.train_acc, on_step=False, on_epoch=True)
