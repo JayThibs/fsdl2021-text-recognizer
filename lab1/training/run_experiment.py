@@ -101,6 +101,10 @@ def main():
     # pylint: disable=no-member
     # Why don't I need to pass train_dataloader, val_dataloaders?
     # Does this not do anything unless I pass --auto_lr_find and/or --auto_scale_batch_size?
+    # It seems there's an error when we use both auto_lr_fin AND auto_scale_batch_size
+    # Perhaps we need to run them separately: https://github.com/PyTorchLightning/pytorch-lightning/issues/5374
+    # With MLP + MNIST: model had 10% accuracy with lr_find and 50% accuracy with auto_scale_batch_size. However, +97% without them.
+    # I expect that they both work well for transfer learning, but not for a simple untrained MLP.
     trainer.tune(lit_model, datamodule=data)  # If passing --auto_lr_find, this will set learning rate
                                               # tune: can find best batch size and learning rate
 
