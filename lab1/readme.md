@@ -33,21 +33,21 @@ Today, we start with the bare minimum:
 ├── readme.md
 ├── text_recognizer
 │   ├── data
-│   │   ├── base_data_module.py
+│   │   ├── base_data_module.py:    This module contains classes for the different datasets we will use across the labs. We inherit the classes in the dataset class. It is basically a refactoring for all datasets.
 │   │   ├── __init__.py
-│   │   ├── mnist.py
+│   │   ├── mnist.py:               Inherits BaseDataModule, it is the class we use for training in this particular lab 1.
 │   │   └── util.py
 │   ├── __init__.py
 │   ├── lit_models
-│   │   ├── base.py: contains the pytorch lightning code. Instantiate model, and then train it. Contains Accuracy() and BaseLitModel.
+│   │   ├── base.py:                contains the pytorch lightning code. Instantiate model, and then train it. Contains Accuracy() and BaseLitModel.
 │   │   └── __init__.py
 │   ├── models
 │   │   ├── __init__.py
-│   │   └── mlp.py
+│   │   └── mlp.py:                 contains model code for mlp model. Feeds into base.py.
 │   └── util.py
 └── training
     ├── __init__.py
-    └── run_experiment.py: this is the main script.
+    └── run_experiment.py:          this is the main script.
 ```
 
 We can see that the main breakdown of the codebase is between `text_recognizer` and `training`.
