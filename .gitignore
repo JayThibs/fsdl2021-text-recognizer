@@ -1,6 +1,7 @@
 .vscode
 data/
 lab1/training/logs/**
+lab2/notebooks/lightning_logs/**
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
