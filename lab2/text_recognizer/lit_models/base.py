@@ -1,4 +1,5 @@
 import argparse
+import platform
 import pytorch_lightning as pl
 import torch
 
@@ -75,7 +76,10 @@ class BaseLitModel(pl.LightningModule):  # pylint: disable=too-many-ancestors
     def training_step(self, batch, batch_idx):  # pylint: disable=unused-argument
         x, y = batch
         logits = self(x)
-        loss = self.loss_fn(logits, y)
+        if platform.system() == "Windows":
+            loss = self.loss_fn(logits, y.long())
+        else:
+            loss = self.loss_fn(logits, y) # linux
         self.log("train_loss", loss)
         self.train_acc(logits, y)
         self.log("train_acc", self.train_acc, on_step=False, on_epoch=True)
@@ -84,7 +88,10 @@ class BaseLitModel(pl.LightningModule):  # pylint: disable=too-many-ancestors
     def validation_step(self, batch, batch_idx):  # pylint: disable=unused-argument
         x, y = batch
         logits = self(x)
-        loss = self.loss_fn(logits, y)
+        if platform.system() == "Windows":
+            loss = self.loss_fn(logits, y.long())
+        else:
+            loss = self.loss_fn(logits, y) # linux
         self.log("val_loss", loss, prog_bar=True)
         self.val_acc(logits, y)
         self.log("val_acc", self.val_acc, on_step=False, on_epoch=True, prog_bar=True)
